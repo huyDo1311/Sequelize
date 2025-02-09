@@ -1,4 +1,4 @@
-export const responseSuccess = (metadata = null,message = `OK`,code = 200) => {
+export const responseSuccess = (metaData = null,message = `OK`,code = 200) => {
     
     if (typeof code !== `number`) code = 200;
 
@@ -6,7 +6,7 @@ export const responseSuccess = (metadata = null,message = `OK`,code = 200) => {
         status: `success`,
             code,
             message: message,
-            metaData : metadata,
+            metaData : metaData,
             doc: `api.domain.com/doc`
     }
 }

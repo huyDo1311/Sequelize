@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { ACCESS_TOKEN_SECRET } from "../constant/app.constant.js";
 import prisma from "../prisma/init.prisma.js";
-import {UnAuthorizationException} from '../../common/helpers/error.helper.js';
+import { UnAuthorizationException } from '../../common/helpers/error.helper.js';
 
 export const protect = async (req, res, next) => {
 
@@ -9,7 +9,7 @@ export const protect = async (req, res, next) => {
 
         const accessToken = req.headers.authorization?.split(` `)[1];
 
-        if(!accessToken){
+        if (!accessToken) {
             throw new UnAuthorizationException('Vui lòng cung cấp authorization');
         }
 
@@ -19,13 +19,16 @@ export const protect = async (req, res, next) => {
         const user = await prisma.users.findUnique({
             where: {
                 user_id: decode.userId
+            },
+            include: {
+                roles: true
             }
         })
 
         req.user = user;
 
         next();
-        
+
     } catch (error) {
         next(error)
     }

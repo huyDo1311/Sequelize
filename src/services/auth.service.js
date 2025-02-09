@@ -14,6 +14,8 @@ const authService = {
                 email: email
             }
         })
+
+        // console.log({userExists});
         if (userExists) {
             throw new BadRequestException(`Tài khoản đã tồn tại`);
         }
@@ -31,9 +33,12 @@ const authService = {
         delete userNew.pass_word;
 
         // Gửi email trào mừng
-        sendMail(email).catch( (err) => {
+        sendMail(email).catch((err) => {
             console.log(`Lỗi gửi email:`, err)
         })
+
+        // userNew.pass_word = `1234`;
+        // userNew.email = 1234;
 
         return userNew;
     },
@@ -105,18 +110,18 @@ const authService = {
         if (!refreshToken) {
             throw new UnAuthorizationException('Vui lòng cung cấp authorization');
         }
-        
+
         const accessToken = req.headers[`x-access-token`];
         if (!accessToken) {
             throw new UnAuthorizationException('Vui lòng cung cấp authorization');
         }
 
         const decodeRefreshToken = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET)
-        const decodeAccessToken = jwt.verify(accessToken, ACCESS_TOKEN_SECRET, {ignoreExpiration: true})
+        const decodeAccessToken = jwt.verify(accessToken, ACCESS_TOKEN_SECRET, { ignoreExpiration: true })
         // console.log(accessToken);
         // console.log({decodeAccessToken, decodeRefreshToken});
 
-        if(decodeAccessToken.userId !== decodeRefreshToken.userId){
+        if (decodeAccessToken.userId !== decodeRefreshToken.userId) {
             throw new UnAuthorizationException(`2 Cặp Token không hợp lệ`);
         }
 
@@ -126,11 +131,14 @@ const authService = {
             },
         })
 
-        if(!userExists) throw new UnAuthorizationException(`User không tồn tại`);
-        
+        if (!userExists) throw new UnAuthorizationException(`User không tồn tại`);
+
         const tokens = authService.createTokens(userExists.user_id);
 
         return tokens;
+    },
+    getInfo: async (req) => {
+        return req.user
     },
 
 
